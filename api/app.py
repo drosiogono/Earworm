@@ -28,6 +28,8 @@ try:
     from api.utils.security_headers import add_security_headers
     from api.services.mus_service import MusicService
     from api.routes.mus_routes import create_music_routes
+    from api.services.earworm_service import EarwormService
+    from api.routes.earworm_routes import create_earworm_routes
 except Exception:  # fallback for running from inside api/
     from database import MoodDatabase
     from services.mood_service import MoodService
@@ -46,6 +48,8 @@ except Exception:  # fallback for running from inside api/
     from utils.security_headers import add_security_headers
     from services.mus_service import MusicService
     from routes.mus_routes import create_music_routes
+    from services.earworm_service import EarwormService
+    from routes.earworm_routes import create_earworm_routes
 
 def create_app(config_name="default"):
     """Application factory pattern"""
@@ -93,6 +97,7 @@ def create_app(config_name="default"):
 
     # Initialize music service
     music_service = MusicService(db)
+    earworm_service = EarwormService(db)
 
     # Register blueprints
     app.register_blueprint(create_auth_routes(user_service), url_prefix="/api")
@@ -104,6 +109,7 @@ def create_app(config_name="default"):
     )
     app.register_blueprint(create_misc_routes(), url_prefix="/api")
     app.register_blueprint(create_config_routes(), url_prefix="/api")
+    app.register_blueprint(create_earworm_routes(earworm_service), url_prefix="/api")
 
     # Expose services for optional blueprints (e.g., OAuth) to reuse
     try:

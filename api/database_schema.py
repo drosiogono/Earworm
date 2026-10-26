@@ -33,6 +33,7 @@ class DatabaseSchemaMixin(DatabaseConnectionMixin):
                 self._create_goals_table(conn)
                 self._create_goal_completions_table(conn)
                 self._create_user_metrics_table(conn)
+                self._create_earworm_tables(conn)
 
                 # Shared indexes
                 self._create_database_indexes(conn)

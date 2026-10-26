@@ -22,10 +22,35 @@ const API_BASE_URL = normalizeBaseUrl(
 class ApiService {
   constructor() {
     this.token = null;
+    this.authRefreshHandler = null;
+    this.authRefreshPromise = null;
   }
 
   setAuthToken(token) {
     this.token = token;
+  }
+
+  setAuthRefreshHandler(handler) {
+    this.authRefreshHandler = handler;
+  }
+
+  async wait(milliseconds) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  }
+
+  shouldRetry(method, status) {
+    const safeMethod = ['GET', 'HEAD', 'OPTIONS'].includes(method);
+    const transientStatus = [408, 425, 429, 500, 502, 503, 504].includes(status);
+    return safeMethod && transientStatus;
+  }
+
+  retryDelay(attempt, response) {
+    const retryAfter = response?.headers?.get('Retry-After');
+    const retryAfterSeconds = Number(retryAfter);
+    if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds >= 0) {
+      return Math.min(retryAfterSeconds * 1000, 10000);
+    }
+    return Math.min(500 * (2 ** attempt), 4000) + Math.round(Math.random() * 200);
   }
 
   async request(endpoint, options = {}) {
@@ -48,12 +73,14 @@ class ApiService {
         url = `${baseNoTrail}${path}`;
       }
     }
+    const { skipAuthRefresh = false, maxRetries = 2, ...fetchOptions } = options;
+    const method = (fetchOptions.method || 'GET').toUpperCase();
     const config = {
       headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
+        ...(fetchOptions.body ? { 'Content-Type': 'application/json' } : {}),
+        ...fetchOptions.headers,
       },
-      ...options,
+      ...fetchOptions,
     };
 
     if (this.token) {
@@ -63,9 +90,45 @@ class ApiService {
       // console.log('API Request WITHOUT token');
     }
 
-    try {
-      const response = await fetch(url, config);
+    let attempt = 0;
+    let authRetried = false;
+    while (true) {
+      let response;
+      try {
+        response = await fetch(url, config);
+      } catch (error) {
+        if (attempt < maxRetries && ['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+          await this.wait(this.retryDelay(attempt));
+          attempt += 1;
+          continue;
+        }
+        throw new Error(`Network request failed after ${attempt + 1} attempt(s): ${error.message}`);
+      }
+
+      if (response.status === 401 && !skipAuthRefresh && !authRetried && this.authRefreshHandler) {
+        try {
+          if (!this.authRefreshPromise) {
+            this.authRefreshPromise = this.authRefreshHandler().finally(() => {
+              this.authRefreshPromise = null;
+            });
+          }
+          await this.authRefreshPromise;
+          authRetried = true;
+          if (this.token) {
+            config.headers.Authorization = `Bearer ${this.token}`;
+            continue;
+          }
+        } catch (refreshError) {
+          throw new Error(`Authentication expired and could not be renewed: ${refreshError.message}`);
+        }
+      }
+
       if (!response.ok) {
+        if (attempt < maxRetries && this.shouldRetry(method, response.status)) {
+          await this.wait(this.retryDelay(attempt, response));
+          attempt += 1;
+          continue;
+        }
         // Try to parse JSON error, else include text snippet to aid debugging
         let errorMessage = `HTTP error! status: ${response.status}`;
         const ct = response.headers.get('content-type') || '';
@@ -78,7 +141,7 @@ class ApiService {
           const text = await response.text().catch(() => '');
           if (text) errorMessage += ` | body: ${text.slice(0, 200)}`;
         }
-        throw new Error(errorMessage);
+        throw new Error(`${errorMessage} (after ${attempt + 1} attempt(s))`);
       }
       // Parse JSON safely
       const ct = response.headers.get('content-type') || '';
@@ -87,9 +150,6 @@ class ApiService {
         throw new Error(`Expected JSON but received: ${ct || 'unknown'} | body: ${text.slice(0, 200)}`);
       }
       return await response.json();
-    } catch (error) {
-      console.error('API request failed:', error);
-      throw error;
     }
   }
 
@@ -102,6 +162,7 @@ class ApiService {
   async googleAuth(googleToken) {
     return this.request('/api/auth/google', {
       method: 'POST',
+      skipAuthRefresh: true,
       body: JSON.stringify({ token: googleToken }),
     });
   }
@@ -109,12 +170,14 @@ class ApiService {
   async localLogin() {
     return this.request('/api/auth/local/login', {
       method: 'POST',
+      skipAuthRefresh: true,
     });
   }
 
   async verifyToken(token) {
     return this.request('/api/auth/verify', {
       method: 'POST',
+      skipAuthRefresh: true,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -124,6 +187,37 @@ class ApiService {
   // Mood entries endpoints
   async getMoodEntries() {
     return this.request('/api/moods');
+  }
+
+  // Earworm music journal endpoints
+  async searchEarwormMusic(query) {
+    return this.request(`/api/earworm/music/search?q=${encodeURIComponent(query)}`);
+  }
+
+  async getEarwormEntries({ start, end } = {}) {
+    const params = new URLSearchParams();
+    if (start) params.set('start_date', start);
+    if (end) params.set('end_date', end);
+    const query = params.toString();
+    return this.request(`/api/earworm/entries${query ? `?${query}` : ''}`);
+  }
+
+  async createEarwormEntry(entry) {
+    return this.request('/api/earworm/entries', {
+      method: 'POST',
+      body: JSON.stringify(entry),
+    });
+  }
+
+  async updateEarwormEntry(entryId, patch) {
+    return this.request(`/api/earworm/entries/${entryId}`, {
+      method: 'PUT',
+      body: JSON.stringify(patch),
+    });
+  }
+
+  async deleteEarwormEntry(entryId) {
+    return this.request(`/api/earworm/entries/${entryId}`, { method: 'DELETE' });
   }
 
   async createMoodEntry(entryData) {

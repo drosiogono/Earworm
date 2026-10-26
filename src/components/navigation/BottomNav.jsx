@@ -1,11 +1,10 @@
-import { Home, BarChart3, Trophy, Settings, Target } from 'lucide-react';
-import { useEffect } from 'react';
+import { Home, BarChart3, Trophy, Settings } from 'lucide-react';
+import { createElement, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 const BottomNav = ({ onLoadStatistics }) => {
   const items = [
     { key: '/dashboard', label: 'Home', icon: Home, end: true },
-    { key: '/dashboard/goals', label: 'Goals', icon: Target },
     { key: '/dashboard/stats', label: 'Stats', icon: BarChart3 },
     { key: '/dashboard/achievements', label: 'Awards', icon: Trophy },
     { key: '/dashboard/settings', label: 'Settings', icon: Settings },
@@ -21,7 +20,7 @@ const BottomNav = ({ onLoadStatistics }) => {
 
   return (
     <nav className="bottom-nav">
-      {items.map(({ key, label, icon: Icon, end }) => (
+      {items.map(({ key, label, icon, end }) => (
         <NavLink
           key={key}
           to={key}
@@ -30,7 +29,7 @@ const BottomNav = ({ onLoadStatistics }) => {
           className={({ isActive }) => `bottom-nav__item ${isActive ? 'is-active' : ''}`}
           aria-label={label}
         >
-          <Icon size={20} />
+          {createElement(icon, { size: 20 })}
           <span className="bottom-nav__label">{label}</span>
         </NavLink>
       ))}

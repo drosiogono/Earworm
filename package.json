@@ -1,9 +1,9 @@
 {
   "name": "nightlio",
   "private": true,
-  "version": "0.1.7",
+  "version": "1.1.0",
   "type": "module",
-  "description": "A beautiful, self-hosted daily mood tracker and journal",
+  "description": "Earworm: a self-hosted music memory calendar built on Nightlio",
   "author": "shirsakm",
   "license": "MIT",
   "homepage": "https://github.com/shirsakm/nightlio",

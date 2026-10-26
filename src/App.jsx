@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import LoginPage from "./components/auth/LoginPage";
 import NotFound from "./views/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -13,7 +13,6 @@ import BottomNav from "./components/navigation/BottomNav";
 import FAB from "./components/FAB";
 import HistoryView from "./views/HistoryView";
 import HistoryList from "./components/history/HistoryList";
-import GoalsSection from "./components/goals/GoalsSection";
 import EntryView from "./views/EntryView";
 import StatisticsView from "./components/stats/StatisticsView";
 import SettingsView from "./views/SettingsView";
@@ -26,6 +25,7 @@ import { useMoodData } from "./hooks/useMoodData";
 import { useGroups } from "./hooks/useGroups";
 import { useStatistics } from "./hooks/useStatistics";
 import MusicDock from './components/mood/MusicDock'
+import EarwormView from './features/earworm/EarwormView';
 import "./App.css";
 
 const MusicDockGate = () => {
@@ -40,8 +40,7 @@ const AppContent = () => {
   const location = useLocation();
   
   // Custom hooks
-  const { pastEntries, setPastEntries, loading: historyLoading, error: historyError, refreshHistory } = useMoodData();
-  const [searchResults, setSearchResults] = useState(null);
+  const { pastEntries, setPastEntries, refreshHistory } = useMoodData();
   const { groups, createGroup, createGroupOption } = useGroups();
   const { statistics, currentStreak, loading: statsLoading, error: statsError, loadStatistics } = useStatistics();
 
@@ -73,10 +72,6 @@ const AppContent = () => {
     setPastEntries(prev => prev.filter(entry => entry.id !== deletedEntryId));
   };
 
-  const handleStartEdit = (entry) => {
-    navigate('entry', { state: { entry: entry, mood: entry.mood } });
-  };
-
   const handleEditMoodSelect = (moodValue) => {
     navigate('.', { state: { ...location.state, mood: moodValue }, replace: true });
   };
@@ -102,34 +97,8 @@ const AppContent = () => {
   const locationState = location.state || {};
   const { mood: selectedMood, entry: editingEntry } = locationState;
   
-  // Get currently displayed entries (apply search filter if active)
-  const displayEntries = searchResults !== null ? searchResults : pastEntries;
-
   // Determine if we are in entry view for layout purposes (no sidebar)
   const isEntryView = location.pathname.endsWith('/entry');
-
-  const handleGlobalSearch = (results) => {
-    setSearchResults(results);
-    if (results !== null) {
-      if (location.pathname !== '/dashboard' && location.pathname !== '/dashboard/') {
-        navigate('/dashboard');
-      }
-      setTimeout(() => {
-        const historySection = document.getElementById('history-section');
-        if (historySection) {
-          // Calculate an offset to prevent header overlap
-          const headerOffset = 80;
-          const elementPosition = historySection.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.scrollY - headerOffset;
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 50); // slight delay to allow rendering if navigating
-    }
-  };
 
   useEffect(() => {
     const handler = () => {
@@ -154,9 +123,6 @@ const AppContent = () => {
         <div className="app-shell">
           <Header
             currentStreak={currentStreak}
-            pastEntries={pastEntries}
-            onSearch={handleGlobalSearch}
-            showSearch={!isEntryView}
           />
 
           <div className="app-layout">
@@ -164,16 +130,9 @@ const AppContent = () => {
             <main className="app-main">
               <Routes>
                 <Route index element={
-                  <HistoryView
-                    pastEntries={displayEntries}
-                    loading={historyLoading}
-                    error={historyError}
-                    onMoodSelect={handleMoodSelect}
-                    onDelete={handleEntryDeleted}
-                    onEdit={handleStartEdit}
-                    renderOnlyHeader={true}
-                  />
+                  <EarwormView />
                 } />
+                <Route path="earworm" element={<EarwormView />} />
                 <Route path="entry" element={
                   <EntryView
                     selectedMood={selectedMood}
@@ -203,25 +162,7 @@ const AppContent = () => {
             </main>
             
             <Routes>
-              <Route index element={
-                <>
-                  <section className="app-wide" aria-label="Goals section">
-                    <GoalsSection onNavigateToGoals={() => navigate('goals')} />
-                  </section>
-                  <section className="app-wide" aria-label="History entries" id="history-section">
-                    <h2 style={{ margin: '0 0 var(--space-1) 0', paddingLeft: 'calc(var(--space-1) / 2)', paddingTop: 0, paddingBottom: 'calc(var(--space-1) / 2)', color: 'var(--text)' }}>
-                      {searchResults !== null ? `Search Results (${searchResults.length})` : 'History'}
-                    </h2>
-                    <HistoryList 
-                      entries={displayEntries}
-                      loading={historyLoading}
-                      error={historyError}
-                      onDelete={handleEntryDeleted}
-                      onEdit={handleStartEdit}
-                    />
-                  </section>
-                </>
-              } />
+              <Route index element={null} />
             </Routes>
           </div>
         </div>
@@ -254,7 +195,8 @@ function App() {
           <BurnerProvider>
             <AuthProvider>
               <Routes>
-                <Route path="/" element={<LandingPage />} />
+                {/* Earworm's calendar is the product home. */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route

@@ -41,6 +41,7 @@ class Config:
     # JWT configuration (legacy)
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or SECRET_KEY
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
+    EARWORM_VERSION = "1.1"
 
 
 class DevelopmentConfig(Config):
@@ -108,6 +109,7 @@ class ConfigData:
     # Feature flags
     ENABLE_GOOGLE_OAUTH: bool
     ENABLE_MOOD_MUSIC: bool
+    EARWORM_VERSION: str
 
     # Google OAuth
     GOOGLE_CLIENT_ID: Optional[str]
@@ -157,6 +159,7 @@ def _load_config_from_env() -> ConfigData:
         PORT=port,
         ENABLE_GOOGLE_OAUTH=enable_google,
         ENABLE_MOOD_MUSIC=enable_mood_music,
+        EARWORM_VERSION="1.1",
         GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID"),
         GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET"),
         GOOGLE_CALLBACK_URL=os.getenv("GOOGLE_CALLBACK_URL"),
@@ -188,6 +191,7 @@ def config_to_public_dict(cfg: ConfigData) -> Dict[str, Any]:
     return {
         "enable_google_oauth": bool(cfg.ENABLE_GOOGLE_OAUTH),
         "enable_mood_music": bool(cfg.ENABLE_MOOD_MUSIC),
+        "earworm_version": cfg.EARWORM_VERSION,
         # Expose the Google Client ID so the frontend can initialize GSI correctly
         "google_client_id": cfg.GOOGLE_CLIENT_ID,
     }

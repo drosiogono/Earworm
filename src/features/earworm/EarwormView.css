@@ -1,0 +1,50 @@
+.earworm-page { --ew-bg:var(--bg); --ew-text:var(--text); --ew-accent:var(--accent-600); --ew-muted:var(--text-muted); --ew-card:var(--surface); --ew-line:var(--border); --ew-soft:var(--border-soft); min-height:calc(100vh - 70px); padding:10px 4px 60px; background:var(--bg); color:var(--ew-text); }
+.earworm-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+.earworm-brand { display:flex; align-items:center; gap:10px; font-size:20px; font-weight:750; letter-spacing:-.05em; }
+.earworm-brand small { color:var(--ew-muted); font-size:11px; font-weight:600; letter-spacing:0; }
+.earworm-mark { width:34px; height:34px; border-radius:50%; background:var(--ew-accent); color:var(--ew-card); display:grid; place-items:center; font-size:18px; transform:rotate(-8deg); }
+.earworm-primary { display:inline-flex; gap:6px; align-items:center; border:0; border-radius:999px; padding:10px 15px; background:var(--ew-accent); color:var(--on-accent); font-size:13px; font-weight:700; box-shadow:var(--shadow-sm); }
+.earworm-primary:disabled { opacity:.45; cursor:not-allowed; }
+.earworm-alert { background:var(--danger-bg); color:var(--danger-text); border-radius:12px; padding:10px 13px; font-size:12px; margin-bottom:16px; }
+.earworm-layout { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr); gap:28px; align-items:start; }
+.earworm-kicker { color:var(--ew-muted); font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:750; margin-bottom:8px; }
+.earworm-calendar-title { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:17px; }
+.earworm-page h1,.earworm-page h2,.earworm-page p { margin:0; }.earworm-page h1 { font-size:clamp(28px,4vw,42px); line-height:1; letter-spacing:-.07em; }.earworm-page h2 { font-size:20px; line-height:1.1; letter-spacing:-.04em; }.earworm-calendar-title p,.earworm-detail .earworm-muted { color:var(--ew-muted); font-size:12px; margin-top:7px; }
+.earworm-month-nav { display:flex; align-items:center; gap:5px; color:var(--ew-muted); }.earworm-month-nav strong { color:var(--ew-text); font-size:12px; min-width:68px; text-align:center; }.earworm-month-nav button { width:30px; height:30px; padding:0; border:1px solid var(--ew-line); background:transparent; border-radius:50%; display:grid; place-items:center; }
+.earworm-calendar { display:grid; grid-template-columns:repeat(7,1fr); background:var(--ew-card); border-radius:18px; padding:13px; box-shadow:var(--shadow-sm); }.earworm-weekday { text-align:center; color:var(--ew-muted); font-size:10px; font-weight:750; padding:3px 0 11px; }.earworm-day { min-height:92px; border:0; border-top:1px solid var(--ew-soft); border-right:1px solid var(--ew-soft); background:transparent; padding:8px 6px; text-align:left; color:var(--ew-text); }.earworm-day:nth-child(7n) { border-right:0; }.earworm-day:hover { background:var(--surface-hover); }.earworm-day.selected { background:var(--accent-surface); box-shadow:inset 0 0 0 2px var(--ew-accent); border-radius:8px; }.earworm-day-number { display:block; font-size:11px; font-weight:750; }.earworm-day.today .earworm-day-number { color:var(--ew-accent); }.earworm-covers { display:flex; align-items:center; min-height:35px; margin-top:8px; padding-left:2px; }.earworm-covers img { width:34px; height:34px; border-radius:6px; object-fit:cover; border:2px solid var(--ew-card); margin-left:-7px; box-shadow:var(--shadow-sm); }.earworm-covers img:first-child { margin-left:0; }.earworm-covers b { width:22px; height:22px; display:grid; place-items:center; margin-left:-4px; border-radius:50%; background:var(--ew-text); color:var(--ew-card); border:2px solid var(--ew-card); font-size:8px; }.earworm-day small { color:var(--ew-muted); font-size:9px; display:block; margin-top:5px; }.earworm-detail { position:sticky; top:15px; }.earworm-timeline { display:flex; flex-direction:column; gap:8px; margin-top:17px; }.earworm-track { display:grid; grid-template-columns:48px 1fr auto; gap:10px; align-items:center; background:var(--ew-card); padding:9px; border-radius:14px; box-shadow:var(--shadow-sm); }.earworm-track img { width:48px; height:48px; border-radius:8px; object-fit:cover; }.earworm-track strong,.earworm-track span,.earworm-track em { display:block; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }.earworm-track strong { font-size:12px; }.earworm-track span { color:var(--ew-muted); font-size:10px; margin-top:3px; }.earworm-track em { color:var(--ew-muted); font-size:10px; font-style:normal; margin-top:5px; }.earworm-track time { color:var(--ew-accent); font-size:11px; font-weight:750; align-self:start; }.earworm-empty { border:1px dashed var(--ew-muted); color:var(--ew-muted); border-radius:14px; padding:25px 14px; text-align:center; font-size:12px; line-height:1.6; }.earworm-add-day { display:flex; justify-content:center; align-items:center; gap:6px; width:100%; margin-top:13px; padding:12px; border:1px dashed var(--ew-accent); border-radius:13px; color:var(--ew-accent); background:transparent; font-size:12px; font-weight:700; }.earworm-loading { margin-top:10px; }.earworm-modal-backdrop { position:fixed; inset:0; z-index:20; background:var(--overlay); display:grid; place-items:center; padding:16px; }.earworm-modal { width:min(490px,100%); max-height:calc(100vh - 32px); overflow:auto; background:var(--ew-card); border-radius:21px; padding:22px; box-shadow:var(--shadow-lg); }.earworm-modal-head { display:flex; justify-content:space-between; }.earworm-modal-head p { color:var(--ew-muted); font-size:11px; margin-top:6px; }.earworm-close { border:0; background:transparent; color:var(--ew-muted); padding:3px; }.earworm-modal label { display:block; color:var(--ew-muted); font-size:11px; font-weight:700; margin:15px 0 7px; }.earworm-modal label span { font-weight:400; }.earworm-search { display:flex; gap:8px; align-items:center; border:1px solid var(--ew-line); padding:0 10px; border-radius:11px; }.earworm-search:focus-within { border-color:var(--ew-accent); box-shadow:var(--ring); }.earworm-search input,.earworm-modal textarea,.earworm-modal input[type=time] { width:100%; border:0; outline:0; background:transparent; color:var(--ew-text); padding:10px 0; }.earworm-modal textarea { min-height:72px; border:1px solid var(--ew-line); border-radius:11px; padding:10px; resize:vertical; }.earworm-results { display:flex; flex-direction:column; gap:6px; margin-top:8px; }.earworm-result { display:flex; align-items:center; gap:9px; width:100%; border:1px solid var(--ew-line); background:transparent; border-radius:11px; padding:7px; text-align:left; }.earworm-result.selected { background:var(--accent-surface); border-color:var(--ew-accent); }.earworm-result img { width:37px; height:37px; border-radius:6px; object-fit:cover; }.earworm-result strong,.earworm-result small { display:block; }.earworm-result strong { font-size:11px; }.earworm-result small { color:var(--ew-muted); font-size:10px; margin-top:3px; }.earworm-form-row { max-width:150px; }.earworm-helper { color:var(--ew-muted); font-size:10px; line-height:1.5; margin-top:8px!important; }.earworm-modal-actions { display:flex; justify-content:flex-end; gap:7px; margin-top:18px; }.earworm-secondary { border:1px solid var(--ew-line); background:transparent; border-radius:999px; padding:9px 13px; font-size:12px; font-weight:700; }
+@media (max-width:900px) { .earworm-layout { grid-template-columns:1fr; }.earworm-detail { position:static; } }
+@media (max-width:560px) { .earworm-page { padding:4px 0 40px; }.earworm-calendar { padding:8px; }.earworm-day { min-height:70px; padding:6px 4px; }.earworm-covers img { width:27px; height:27px; }.earworm-covers img:nth-child(n+3) { display:none; }.earworm-covers { min-height:28px; margin-top:6px; }.earworm-calendar-title { align-items:start; }.earworm-month-nav { padding-top:4px; }.earworm-month-nav strong { min-width:55px; } }
+.earworm-search-status { display:flex; align-items:center; gap:8px; min-height:38px; padding:8px 10px; border-radius:11px; background:color-mix(in oklab, var(--ew-text) 5%, transparent); color:var(--ew-muted); font-size:11px; }
+.earworm-search-error { color:var(--danger); background:color-mix(in oklab, var(--danger) 10%, transparent); }
+.earworm-spinner { animation:earworm-spin .8s linear infinite; color:var(--ew-accent); }
+@keyframes earworm-spin { to { transform:rotate(360deg); } }
+
+.earworm-calendar { grid-template-columns:repeat(7, minmax(0, 1fr)); }
+.earworm-day { min-width:0; }
+.earworm-covers { min-width:0; overflow:hidden; }
+.earworm-day.future,
+.earworm-day.future:hover,
+.earworm-day.future:disabled { color:color-mix(in oklab, var(--ew-text) 42%, transparent); background:transparent; cursor:not-allowed; box-shadow:none; }
+.earworm-day.future .earworm-day-number,
+.earworm-day.future small { color:color-mix(in oklab, var(--ew-muted) 58%, transparent); }
+.earworm-day.future .earworm-covers { opacity:.42; }
+
+/* Liquid Glass surfaces with solid-color fallback for browsers without blur support. */
+.earworm-calendar,
+.earworm-track,
+.earworm-modal {
+  background: var(--ew-card);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(135%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(135%);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .earworm-calendar,
+  .earworm-track,
+  .earworm-modal {
+    background: var(--ew-card);
+  }
+}

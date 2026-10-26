@@ -61,6 +61,23 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token, config.enable_google_oauth, logout, localLogin]);
 
+  const refreshAuth = useCallback(async () => {
+    if (config.enable_google_oauth) {
+      logout();
+      throw new Error('Please sign in again.');
+    }
+    const result = await localLogin();
+    if (!result.success) {
+      logout();
+      throw new Error(result.error || 'Local session renewal failed.');
+    }
+  }, [config.enable_google_oauth, localLogin, logout]);
+
+  useEffect(() => {
+    apiService.setAuthRefreshHandler(refreshAuth);
+    return () => apiService.setAuthRefreshHandler(null);
+  }, [refreshAuth]);
+
   useEffect(() => {
     if (configLoading) return;
     if (token) {

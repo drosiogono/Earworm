@@ -1,5 +1,11 @@
 <div align="center">
 
+## Earworm v1.1
+
+This fork adds a calendar-first music journal to the Nightlio foundation. It keeps Nightlio's React/Vite frontend, Flask API, SQLite database, JWT authentication, and Docker deployment model, then adds multiple music memories per calendar day, separate `display_time` and server-generated `recorded_at` timestamps, MusicBrainz recording search, Cover Art Archive artwork, and persistent `earworm_entries` storage.
+
+MusicBrainz requests are server-side, cached for five minutes, identified with `MUSICBRAINZ_USER_AGENT`, and spaced to respect the public service.
+
 <img src="https://raw.githubusercontent.com/shirsakm/nightlio/refs/heads/dev/public/logo.png" height="60px" />
 <h1>Nightlio</h1>
 

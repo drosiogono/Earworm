@@ -72,12 +72,25 @@
   --shadow-2: none;
   --shadow-3: none;
 
+  /* Liquid Glass surfaces: translucent fallback + blur when supported */
+  --glass-bg: rgba(255,255,255,0.72);
+  --glass-border: rgba(255,255,255,0.78);
+  --glass-highlight: rgba(255,255,255,0.62);
+  --glass-shadow: 0 10px 32px rgba(16,24,40,0.10);
+  --glass-blur: 20px;
+
   /* Interaction */
-  --ring: 0 0 0 3px rgba(47,126,137,0.28);
+  --focus-ring: rgba(47,126,137,0.28);
+  --ring: 0 0 0 3px var(--focus-ring);
 
   /* Semantic status colors */
   --success: #16a34a;          /* emerald-600 */
   --danger: #ef4444;           /* red-500 */
+  --danger-bg: #FDECEC;
+  --danger-text: #B42318;
+  --surface-hover: #F8FAFC;
+  --accent-surface: #EAF7F8;
+  --on-accent: #FFFFFF;
   /* Mood scale (light theme defaults) */
   --mood-1: #ef4444; /* red */
   --mood-2: #f59e0b; /* orange */
@@ -156,11 +169,11 @@ button {
   cursor: pointer;
   transition: transform 180ms cubic-bezier(.2,.6,.2,1), box-shadow 180ms cubic-bezier(.2,.6,.2,1), background-color 180ms cubic-bezier(.2,.6,.2,1);
 }
-button:hover { background-color: #f8fafc; box-shadow: var(--shadow-sm); }
+button:hover { background-color: var(--surface-hover); box-shadow: var(--shadow-sm); }
 button:focus-visible { outline: none; box-shadow: var(--ring); }
 
 /* Primary button variant */
-button.primary { color: #fff; background: var(--accent-bg); box-shadow: var(--shadow-sm); }
+button.primary { color: var(--on-accent); background: var(--accent-bg); box-shadow: var(--shadow-sm); }
 button.primary:hover { background: var(--accent-bg-2); transform: translateY(-1px) scale(1.02); box-shadow: var(--shadow-md); }
 button.primary:active { transform: translateY(0) scale(0.99); box-shadow: var(--shadow-sm); }
 button.primary:disabled { opacity: .6; cursor: not-allowed; }
@@ -177,43 +190,46 @@ html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
-  /* Dracula palette */
-  --bg: #282a36;               /* background */
-  --surface: #343746;          /* elevated surfaces */
-  --text: #f5f5f5;             /* foreground - lighter/whiter */
-  --text-muted: #9ca3af;       /* comments - lighter gray */
-  --border: #44475a;           /* current line */
-  --bg-card: rgba(52,55,70,0.92);
+  /* Same calm teal family as light theme, with dark values for contrast */
+  --bg: #203033;               /* background */
+  --surface: #2B3D40;          /* elevated surfaces */
+  --text: #F2F7F7;             /* foreground */
+  --text-muted: #A9B9BA;       /* secondary text */
+  --border: #43585B;           /* dividers */
+  --border-soft: #34494C;
+  --bg-card: var(--surface);
   --fg-body: var(--text);
 
-  /* Accents mapped to Dracula purple as primary */
-  --accent-50:  #f7f3ff;
-  --accent-100: #efe7ff;
-  --accent-200: #e0d1ff;
-  --accent-400: #d5befe;
-  --accent-500: #c9aefc;
-  --accent-600: #bd93f9;       /* primary */
-  --accent-700: #a97cf3;
+  /* Light-theme teal accent, lifted for dark-surface contrast */
+  --accent-50:  #EAF7F8;
+  --accent-100: #CBECEF;
+  --accent-200: #A8DCE0;
+  --accent-400: #76C3C9;
+  --accent-500: #56AEB6;
+  --accent-600: #4A9DA6;       /* primary */
+  --accent-700: #3A7F87;
 
-  /* Darker backgrounds for lavender surfaces (only affects backgrounds using these tokens) */
-  --accent-bg: color-mix(in oklab, var(--accent-600) 85%, #000);
-  --accent-bg-2: color-mix(in oklab, var(--accent-700) 85%, #000);
+  --accent-bg: var(--accent-600);
+  --accent-bg-2: var(--accent-500);
   --accent-bg-soft: color-mix(in oklab, var(--accent-600) 22%, transparent);
   --accent-bg-softer: color-mix(in oklab, var(--accent-600) 16%, transparent);
   --accent-chip-bg: color-mix(in oklab, var(--accent-600) 24%, transparent);
+  --danger-bg: #4A292B;
+  --danger-text: #FFB4AB;
+  --surface-hover: #34494C;
+  --accent-surface: color-mix(in oklab, var(--accent-600) 22%, var(--surface));
+  --on-accent: #102426;
 
-  /* Focus ring tuned to accent */
-  --ring: 0 0 0 3px rgba(189,147,249,0.35);
+  --focus-ring: rgba(118,195,201,0.38);
+  --ring: 0 0 0 3px var(--focus-ring);
 
-  /* Semantic status colors for Dracula */
-  --success: #50fa7b;          /* green */
-  --danger: #ff5555;           /* red */
-  /* Mood scale mapped to Dracula */
-  --mood-1: #ff5555; /* red */
-  --mood-2: #ffb86c; /* orange */
-  --mood-3: #f1fa8c; /* yellow */
-  --mood-4: #50fa7b; /* green */
-  --mood-5: #8be9fd; /* cyan */
+  --success: #65D391;
+  --danger: #FF7167;
+  --mood-1: #FF7167;
+  --mood-2: #F2B56B;
+  --mood-3: #E4D56A;
+  --mood-4: #65D391;
+  --mood-5: #76C3C9;
   /* Overlays and skeleton */
   --overlay: rgba(0,0,0,0.55);
   --skeleton-a: rgba(255,255,255,0.06);
@@ -226,14 +242,19 @@ html[data-theme="dark"] {
   --shadow-1: var(--shadow-md);
   --shadow-2: var(--shadow-lg);
   --shadow-3: 0 20px 60px rgba(16,24,40,0.14);
+  --glass-bg: rgba(43,61,64,0.72);
+  --glass-border: rgba(169,185,186,0.24);
+  --glass-highlight: rgba(242,247,247,0.12);
+  --glass-shadow: 0 14px 36px rgba(0,0,0,0.24);
+  --glass-blur: 22px;
 
-  /* Shared background gradient (keep blobs in dark mode) */
-  --gradient-background: radial-gradient(circle at top, rgba(80, 94, 255, 0.18), transparent 55%),
-                         radial-gradient(circle at 20% 30%, rgba(255, 194, 99, 0.12), transparent 40%),
+  /* Restrained teal gradient, derived from the same palette */
+  --gradient-background: radial-gradient(circle at top, rgba(74, 157, 166, 0.16), transparent 55%),
+                         radial-gradient(circle at 20% 30%, rgba(118, 195, 201, 0.08), transparent 40%),
                          linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
 
   color-scheme: dark;
 }
 
 /* Subtle hover in dark mode */
-html[data-theme="dark"] button:hover { background-color: rgba(255,255,255,0.04); box-shadow: var(--shadow-sm); }
+html[data-theme="dark"] button:hover { background-color: var(--surface-hover); box-shadow: var(--shadow-sm); }
